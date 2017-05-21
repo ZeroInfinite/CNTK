@@ -28,8 +28,8 @@ void TestFeedForwardNetworkCreation(const DeviceDescriptor& device, bool testSav
 
     auto labelsVarName = L"Labels";
     auto labelsVar = InputVariable({ numOutputClasses }, DataType::Float, labelsVarName);
-    auto trainingLoss = ReduceSum(CrossEntropyWithSoftmax(classifierOutput, labelsVar), L"LossFunction");
-    auto prediction = ReduceSum(ClassificationError(classifierOutput, labelsVar), L"ClassificationError");
+    auto trainingLoss = ReduceSum(CrossEntropyWithSoftmax(classifierOutput, labelsVar), Axis::AllAxes(), L"LossFunction");
+    auto prediction = ReduceSum(ClassificationError(classifierOutput, labelsVar), Axis::AllAxes(), L"ClassificationError");
 
     auto ffNet = Combine({ trainingLoss, prediction, classifierOutput }, L"ClassifierModel");
 
@@ -379,7 +379,7 @@ void TestTimesReduceSequenceAxis(
 
     std::vector<ElementType> outputData[(int)FuncType::TotalTypes];
     ValuePtr outputValue[(int)FuncType::TotalTypes];
-    NDShape outputShape = funcs[0]->Output().Shape().AppendShape({ 1, numSequences });
+    NDShape outputShape = funcs[0]->Output().Shape().AppendShape({ numSequences });
 
     std::vector<ElementType> inputGradientData[(int)FuncType::TotalTypes][NumInputs];
     ValuePtr inputGradientValue[(int)FuncType::TotalTypes][NumInputs];
